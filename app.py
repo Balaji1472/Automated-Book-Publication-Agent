@@ -3,7 +3,7 @@ import json
 import os
 import uuid
 from datetime import datetime
-from scraping.scraper import scrape_chapter, validate_url
+from scraper import scrape_chapter, validate_url
 from ai_agents import ai_writer, ai_reviewer, get_content_analysis, validate_api_key, batch_process
 from vector_store import vector_store
 
