@@ -6,7 +6,7 @@ from datetime import datetime
 
 if "STREAMLIT_ENV" in os.environ and os.environ["STREAMLIT_ENV"] == "cloud":
     logger.warning("ChromaDB disabled on cloud deployment")
-    return False
+    
     
 from scraper import scrape_chapter, validate_url
 from ai_agents import ai_writer, ai_reviewer, get_content_analysis, validate_api_key, batch_process
