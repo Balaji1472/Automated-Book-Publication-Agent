@@ -13,7 +13,6 @@ A comprehensive Human-in-the-Loop system that combines web scraping, AI content 
 **Watch the complete workflow demonstration:**
 [📹 View Demo Video](https://drive.google.com/file/d/1jGSx4PhX_of0yRNCFSgOpapXY8jiz7E9/view?usp=sharing)
 
-*Replace `YOUR_VIDEO_ID` with your actual Google Drive video file ID*
 
 ## ✨ Key Features
 
