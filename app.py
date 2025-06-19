@@ -9,11 +9,7 @@ if "STREAMLIT_ENV" not in os.environ:
     
 from scraper import scrape_chapter, validate_url
 from ai_agents import ai_writer, ai_reviewer, get_content_analysis, validate_api_key, batch_process
-#from vector_store import vector_store  
-# Chromadb operations are disabled by default for cloud deployment.  
-# Uncomment the following lines to enable Chromadb when running locally.
-
-
+from vector_store import vector_store  
 
 st.set_page_config(
     page_title="Dynamic AI Book Processor", 
