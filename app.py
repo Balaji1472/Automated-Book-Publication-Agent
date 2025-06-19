@@ -105,7 +105,7 @@ with st.sidebar:
     chromadb_toggle = st.checkbox(
         "Enable ChromaDB",
         value=st.session_state.chromadb_enabled,
-        help="Enable ChromaDB for searching and storing processed chapters"
+        help="Enable ChromaDB for searching and storing processed chapters",
         disabled=os.environ.get("STREAMLIT_ENV") == "cloud"
     )
     
