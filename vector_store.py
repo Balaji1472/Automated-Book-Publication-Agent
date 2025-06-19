@@ -19,7 +19,11 @@ class VectorStore:
     def initialize(self):
         """Initialize ChromaDB client and collection"""
         try:
-            
+            # Skip if running in unsupported cloud environment
+            if "STREAMLIT_ENV" in os.environ and os.environ["STREAMLIT_ENV"] == "cloud":
+                logger.warning("ChromaDB disabled on cloud deployment")
+                return False
+                
             os.makedirs("./chroma_db", exist_ok=True)
             
             # Initialize ChromaDB client
