@@ -4,8 +4,8 @@ import os
 import uuid
 from datetime import datetime
 
-if "STREAMLIT_ENV" not in os.environ:
-    os.environ["STREAMLIT_ENV"] = "cloud"
+# if "STREAMLIT_ENV" not in os.environ:
+#     os.environ["STREAMLIT_ENV"] = "cloud"
     
 from scraper import scrape_chapter, validate_url
 from ai_agents import ai_writer, ai_reviewer, get_content_analysis, validate_api_key, batch_process
@@ -106,7 +106,7 @@ with st.sidebar:
         "Enable ChromaDB",
         value=st.session_state.chromadb_enabled,
         help="Enable ChromaDB for searching and storing processed chapters",
-        disabled=os.environ.get("STREAMLIT_ENV") == "cloud"
+        # disabled=os.environ.get("STREAMLIT_ENV") == "cloud"
     )
     
     # Handle Chroma initialization
