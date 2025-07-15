@@ -1,274 +1,225 @@
 # 📚 Dynamic AI Book Processor
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+**Transform any chapter URL into publication-ready content with AI-powered writing, reviewing, and human oversight.**
 
-> **Transform any chapter URL into publication-ready content with AI-powered writing and semantic search capabilities**
+A comprehensive Human-in-the-Loop system that scrapes web content, enhances it with AI agents, and provides semantic search capabilities for content management.
 
-A comprehensive Human-in-the-Loop system that combines web scraping, AI content enhancement, professional editing, and semantic search to convert raw web content into polished, publication-ready text.
+## ✨ Features
 
-## 🎥 Demo Video
+- **🌐 Universal Web Scraping**: Extract content from any URL (Wikisource, Project Gutenberg, Archive.org, etc.)
+- **🤖 Dual AI Agents**: AI Writer for style enhancement + AI Reviewer for grammar and clarity
+- **🧠 Reinforcement Learning**: System learns from user feedback to improve output quality
+- **🔍 Semantic Search**: ChromaDB integration for storing and searching processed chapters
+- **🎙️ Voice Support**: Text-to-speech for listening to final outputs
+- **📊 Content Analysis**: Automatic analysis of genre, tone, reading level, and themes
+- **💾 Multiple Export Formats**: Save as TXT, JSON, or comprehensive versions with metadata
+- **🔄 Real-time Editing**: Edit AI outputs before final approval
+- **📈 Learning Insights**: Track AI performance and adaptation over time
 
-**Watch the complete workflow demonstration:**
-[📹 View Demo Video](https://drive.google.com/file/d/1jGSx4PhX_of0yRNCFSgOpapXY8jiz7E9/view?usp=sharing)
-
-
-## ✨ Key Features
-
-### 🌐 **Universal Web Scraping**
-- **Multi-method scraping**: Requests + BeautifulSoup with Playwright fallback
-- **Smart content extraction**: Site-specific selectors for optimal results
-- **Supported platforms**: Wikisource, Project Gutenberg, Archive.org, and generic websites
-- **Error handling**: Robust fallback mechanisms and detailed error reporting
-
-### 🤖 **Dual AI Processing Pipeline**
-- **AI Writer Agent**: Enhances content with configurable writing styles (modern, classic, contemporary, literary, casual)
-- **AI Reviewer Agent**: Professional editing focusing on grammar, clarity, flow, consistency, style, and engagement
-- **Powered by Google Gemini**: Leverages Gemini-1.5-flash for high-quality content generation
-
-### 🔍 **Semantic Search & Storage**
-- **ChromaDB Integration**: Vector-based semantic search across all processed chapters
-- **Intelligent Retrieval**: Find similar content by theme, style, or context
-- **Content Management**: Store, search, and reuse processed chapters
-- **Metadata Tracking**: Comprehensive version control and processing history
-
-### 👥 **Human-in-the-Loop Workflow**
-- **Editable Outputs**: Full control over AI-generated content at every stage
-- **Real-time Preview**: Side-by-side comparison of original, enhanced, and final versions
-- **Feedback Integration**: Add comments and notes to saved versions
-- **Export Options**: Multiple formats including TXT, JSON with full metadata
-
-## 🏗️ Architecture Overview
-
-```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Web Scraper   │───▶│   AI Writer      │───▶│  AI Reviewer    │
-│                 │    │                  │    │                 │
-│ • Requests+BS4  │    │ • Style Config   │    │ • Grammar Fix   │
-│ • Playwright    │    │ • Content Enhance│    │ • Flow Improve  │
-│ • Site-specific │    │ • Narrative Flow │    │ • Clarity Boost │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│  Content Store  │    │  Human Review    │    │  Export System  │
-│                 │    │                  │    │                 │
-│ • ChromaDB      │    │ • Edit Control   │    │ • TXT/JSON      │
-│ • Vector Search │    │ • Feedback Loop  │    │ • Version Track │
-│ • Metadata      │    │ • Final Approval │    │ • Batch Export  │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-```
-
-## 🚀 Installation & Setup
+## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.8 or higher
-- Google Gemini API key
-- Git
 
-### 1. Clone Repository
-```bash
-https://github.com/Balaji1472/Automated-Book-Publication-Agent.git
-cd Book-Publication-Agent
-```
+- Python 3.8+
+- Gemini API Key (Google AI Studio)
 
-### 2. Create Virtual Environment
-```bash
-python -m venv venv
+### Installation
 
-# Windows
-venv\Scripts\activate
+1. **Clone the repository**
+   ```bash
+   https://github.com/Balaji1472/Automated-Book-Publication-Agent.git
+   cd Automated-Book-Publication-Agent
+   ```
 
-# macOS/Linux
-source venv/bin/activate
-```
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### 3. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
+3. **Set up environment variables**
+   ```bash
+   # Create .env file
+   GEMINI_API_KEY="your_gemini_api_key_here" > .env
+   ```
 
-### 4. Environment Configuration
-Create a `.env` file in the project root:
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-```
+4. **Run the application**
+   ```bash
+   streamlit run app.py
+   ```
 
-**Get your Gemini API key:**
-1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Create a new API key
-3. Copy and paste it into your `.env` file
-
-### 5. Install Playwright (Optional)
-For enhanced scraping capabilities:
-```bash
-playwright install chromium
-```
-
-## 🎯 Usage Guide
-
-### Starting the Application
-```bash
-streamlit run app.py
-```
-
-The application will open in your browser at `http://localhost:8501`
+## 🛠️ Usage
 
 ### Basic Workflow
 
-#### 1. **Setup Phase**
-- **Enable ChromaDB**: Toggle semantic search capabilities
-- **Configure Processing**: Select writing style and review focus areas
-- **API Validation**: Ensure Gemini API connection is active
+1. **Configure Settings**: Choose writing style (modern, classic, etc.) and review focus areas
+2. **Enter URL**: Paste any chapter URL in the sidebar
+3. **Process**: Click "Scrape & Process Chapter" to run the full AI pipeline
+4. **Review & Edit**: Modify AI outputs as needed
+5. **Rate & Save**: Provide feedback and save the final version
 
-#### 2. **Content Acquisition**
-- **URL Input**: Paste any chapter/content URL
-- **Smart Scraping**: Automatic content extraction with fallback methods
-- **Content Analysis**: Automatic word count, reading time, and content insights
+### Advanced Features
 
-#### 3. **AI Processing Pipeline**
-- **AI Writer**: Content enhancement with style preferences
-- **AI Reviewer**: Professional editing and quality improvement
-- **Human Review**: Edit and refine AI outputs as needed
+#### Semantic Search
+- Enable ChromaDB for persistent storage
+- Search saved chapters by theme, content, or metadata
+- Reuse and reference previous work
 
-#### 4. **Storage & Export**
-- **Quick Save**: Rapid storage with basic metadata
-- **Comprehensive Save**: Full version with feedback and processing history
-- **Export Options**: TXT and JSON formats with complete metadata
-- **Semantic Storage**: Automatic ChromaDB indexing for future retrieval
+#### Reinforcement Learning
+- System learns from user feedback (Good/Bad ratings)
+- Adapts writing style and focus areas based on preferences
+- Provides learning insights after 3+ feedback entries
 
-#### 5. **Content Management**
-- **Search & Retrieve**: Semantic search across all processed content
-- **Reuse & Iterate**: Load previous chapters for further processing
-- **Version Control**: Track all processing stages and modifications
+#### Batch Processing
+- Process multiple chapters efficiently
+- Automatic content analysis and optimization
+- Export management with version control
+
+## 📋 System Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Web Scraper   │ -> │   AI Writer     │ -> │  AI Reviewer    │
+│  (scraper.py)   │    │ (ai_agents.py)  │    │ (ai_agents.py)  │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         v                       v                       v
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   ChromaDB      │    │   RL Agent      │    │   Voice TTS     │
+│(vector_store.py)│    │ (rl_agent.py)   │    │(voice_support.py)│
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## 🔧 Configuration
+
+### Writing Styles
+- **Modern**: Contemporary language and flow
+- **Classic**: Traditional literary style
+- **Contemporary**: Current, accessible writing
+- **Literary**: Elevated, artistic expression
+- **Casual**: Conversational, informal tone
+
+### Review Focus Areas
+- **Grammar**: Spelling, punctuation, syntax
+- **Clarity**: Sentence structure, readability
+- **Flow**: Paragraph transitions, pacing
+- **Consistency**: Tone, style, voice
+- **Style**: Language enhancement
+- **Engagement**: Reader interest optimization
+
+## 📊 API Requirements
+
+- **Gemini API**: Google's generative AI for text processing
+- **ChromaDB**: Optional, for semantic search functionality
+- **Streamlit**: Web interface framework
 
 ## 📁 Project Structure
 
 ```
 dynamic-ai-book-processor/
 ├── app.py                 # Main Streamlit application
-├── ai_agents.py          # AI processing agents (Writer & Reviewer)
-├── vector_store.py       # ChromaDB integration and semantic search
+├── ai_agents.py          # AI Writer and Reviewer agents
+├── rl_agent.py           # Reinforcement learning system
+├── vector_store.py       # ChromaDB integration
+├── voice_support.py      # Text-to-speech functionality
 ├── scraping/
-│   ├── scraper.py        # Web scraping functionality
-│   └── output/           # Scraped content storage
-├── final_versions/       # Processed and approved content
-├── chroma_db/           # ChromaDB vector database
-├── requirements.txt     # Python dependencies
-├── .env                 # Environment variables (create this)
-└── README.md           # This file
+│   └── scraper.py        # Web scraping utilities
+├── final_versions/       # Saved processed chapters
+├── requirements.txt      # Python dependencies
+└── .env                  # Environment variables
 ```
 
-## 🔧 Configuration Options
+## 🤖 AI Agents
 
-### Writing Styles
-- **Modern**: Contemporary, accessible language
-- **Classic**: Traditional, formal prose
-- **Contemporary**: Current, relatable tone
-- **Literary**: Sophisticated, artistic expression
-- **Casual**: Informal, conversational style
+### AI Writer
+- Rewrites content for better engagement
+- Maintains original meaning and structure
+- Adapts to user-specified writing styles
+- Learns from user feedback via RL
 
-### Review Focus Areas
-- **Grammar**: Spelling, punctuation, syntax corrections
-- **Clarity**: Sentence structure and readability improvements
-- **Flow**: Paragraph transitions and narrative continuity
-- **Consistency**: Tone and style uniformity
-- **Style**: Voice and stylistic enhancements
-- **Engagement**: Reader interest and involvement optimization
+### AI Reviewer
+- Focuses on grammar, clarity, and flow
+- Professional editing quality
+- Customizable focus areas
+- Preserves author's voice and intent
 
-## 🛠️ Technical Implementation
+### RL Agent
+- Learns from user ratings (Good/Bad)
+- Adapts prompts based on successful patterns
+- Provides smart suggestions for processing
+- Tracks learning statistics and improvements
 
-### Core Components
+## 🔍 Semantic Search
 
-#### **Web Scraping Engine** (`scraper.py`)
-- **Dual-method approach**: Requests + BeautifulSoup with Playwright fallback
-- **Site-specific extraction**: Optimized selectors for different platforms
-- **Content cleaning**: Advanced text normalization and navigation removal
-- **Error handling**: Comprehensive exception management and reporting
+ChromaDB integration enables:
+- **Content Storage**: Persistent chapter storage with metadata
+- **Similarity Search**: Find chapters by theme or content
+- **Metadata Filtering**: Search by date, style, source, etc.
+- **Content Reuse**: Load previous chapters for reference
 
-#### **AI Processing System** (`ai_agents.py`)
-- **AI Writer Agent**: Content enhancement with configurable prompts
-- **AI Reviewer Agent**: Professional editing with focus area customization
-- **Batch Processing**: Sequential AI pipeline with error handling
-- **Content Analysis**: Automated insights and reading metrics
+## 📈 Learning System
 
-#### **Vector Storage** (`vector_store.py`)
-- **ChromaDB Integration**: Persistent vector database
-- **Semantic Embeddings**: SentenceTransformer model (all-MiniLM-L6-v2)
-- **Metadata Management**: Comprehensive chapter information storage
-- **Search & Retrieval**: Similarity-based content discovery
+The RL agent tracks:
+- **Success Rate**: Percentage of good vs. bad ratings
+- **Style Preferences**: Most successful writing styles
+- **Focus Areas**: Most effective review focuses
+- **Learning Insights**: Automatically generated improvement suggestions
 
-#### **Web Interface** (`app.py`)
-- **Streamlit Frontend**: Interactive, user-friendly interface
-- **Real-time Processing**: Live status updates and progress tracking
-- **Content Management**: Integrated editing and approval workflow
-- **Export System**: Multiple format support with metadata preservation
+## 🎯 Supported Sources
 
-## 📊 Performance Metrics
+- **Wikisource**: Free literary texts and documents
+- **Project Gutenberg**: Public domain books and literature
+- **Archive.org**: Digital library content
+- **Generic Web Pages**: Any text-based content
 
-- **Scraping Success Rate**: 95%+ across supported platforms
-- **AI Processing Time**: 5-15 seconds per chapter (depending on length)
-- **Search Response Time**: <1 second for semantic queries
-- **Content Quality**: Publication-ready output with minimal manual editing
+## 💾 Export Options
 
-## 🔒 Security & Privacy
+- **TXT**: Plain text format
+- **JSON**: Structured data with metadata
+- **Comprehensive**: Full processing history and feedback
 
-- **API Key Protection**: Environment variable storage
-- **Local Processing**: All content processing happens locally
-- **No Data Transmission**: Content never leaves your system
-- **Secure Storage**: Local file system and database storage
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
-
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙋‍♂️ Support
+## 🚨 Troubleshooting
 
 ### Common Issues
 
-**ChromaDB Installation Issues:**
-```bash
-pip install --upgrade chromadb
-```
+1. **API Key Issues**
+   - Ensure GEMINI_API_KEY is correctly set in .env
+   - Check API key format (starts with "AIza")
+   - Verify API quota and limits
 
-**Playwright Browser Issues:**
-```bash
-playwright install --with-deps chromium
-```
+2. **ChromaDB Issues**
+   - Install chromadb: `pip install chromadb`
+   - Check disk space for vector storage
+   - Clear cache if initialization fails
 
-**API Key Problems:**
-- Ensure your `.env` file is in the project root
-- Verify your Gemini API key is active and has quota
+3. **Scraping Issues**
+   - Verify URL format and accessibility
+   - Check internet connection
+   - Some sites may block automated scraping
 
-### Get Help
-- 📧 **Email**: [balajirama.2005@gmail.com](mailto:balajirama.2005@gmail.com)
+## 🤝 Contributing
 
-## 🚀 Roadmap
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-- [ ] **Multi-language Support**: International content processing
-- [ ] **Advanced AI Models**: Integration with Claude, GPT-4, and local models
-- [ ] **Batch Processing**: Multiple URL processing in parallel
-- [ ] **Export Formats**: PDF, EPUB, and Word document support
-- [ ] **Collaboration Features**: Multi-user editing and approval workflows
-- [ ] **Analytics Dashboard**: Processing metrics and content insights
-- [ ] **API Integration**: RESTful API for programmatic access
+## 📄 License
 
-## 🏆 Acknowledgments
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- **Google AI**: For the powerful Gemini API
-- **Streamlit**: For the excellent web framework
-- **ChromaDB**: For vector database capabilities
-- **BeautifulSoup & Playwright**: For robust web scraping
-- **SentenceTransformers**: For semantic embeddings
+## 👨‍💻 Author
+
+**Balaji V**
+- GitHub: [@Balaji1472](https://github.com/Balaji1472)
+
+## 🙏 Acknowledgments
+
+- Google Gemini AI for powerful text generation
+- ChromaDB for semantic search capabilities
+- Streamlit for the intuitive web interface
+- The open-source community for inspiration and tools
 
 ---
 
-**Made with ❤️ by [Balaji V](https://github.com/Balaji1472)**
-
-*Transform any web content into publication-ready material with the power of AI and human oversight.*
+⭐ **Star this repository if you find it useful!** ⭐
