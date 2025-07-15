@@ -1,15 +1,14 @@
 import streamlit as st
 import json
 import os
+import time
 import uuid
 from datetime import datetime
-
-# if "STREAMLIT_ENV" not in os.environ:
-#     os.environ["STREAMLIT_ENV"] = "cloud"
-    
-from scraper import scrape_chapter, validate_url
-from ai_agents import ai_writer, ai_reviewer, get_content_analysis, validate_api_key, batch_process
-from vector_store import vector_store  
+from scraping.scraper import scrape_chapter, validate_url
+from ai_agents import ai_writer, ai_reviewer, get_content_analysis, validate_api_key, batch_process, clear_api_validation_cache, get_api_status, get_rl_learning_insights
+from vector_store import vector_store
+from rl_agent import rl_agent
+from voice_support import speak_text, stop_speaking, get_speaking_status
 
 st.set_page_config(
     page_title="Dynamic AI Book Processor", 
@@ -79,6 +78,7 @@ def init_session_state():
             st.session_state[key] = default_value
 
 init_session_state()
+rl_agent.load_state()
 
 # Header
 st.markdown('<div class="main-header">', unsafe_allow_html=True)
@@ -99,17 +99,60 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # ChromaDB Section
-    st.subheader("🔍 Semantic Search")
+    with st.sidebar.expander("🔧 API Debug Info"):
+        status = get_api_status()
+        st.json(status)
+        
+        if st.button("🧹 Clear API Cache"):
+            clear_api_validation_cache()
+            st.success("✅ API validation cache cleared!")
     
+    st.subheader("🧠 AI Learning Status")
+    rl_insights = get_rl_learning_insights()
+    
+    if rl_insights["status"] == "enabled":
+        stats = rl_insights["stats"]
+        suggestions = rl_insights["suggestions"]
+        
+        if rl_insights["learning_active"]:
+            st.success(f"🎯 Active Learning: {stats['success_rate']:.1f}% success rate")
+        else:
+            st.info("🌱 Learning Mode: Need 3+ feedback entries to activate")
+        
+        with st.expander("📊 Current AI Suggestions"):
+            st.write(f"**Recommended Style:** {suggestions['recommended_style']}")
+            st.write(f"**Recommended Focus:** {', '.join(suggestions['recommended_focus_areas'])}")
+            st.write(f"**Confidence:** {suggestions['confidence_score']:.1f}/1.0")
+            
+            if suggestions['learning_insights']:
+                st.write("**Learning Insights:**")
+                for insight in suggestions['learning_insights']:
+                    st.write(f"• {insight}")
+        
+        with st.expander("📈 Learning Statistics"):
+            st.write(f"**Total Feedback:** {stats['total_feedback']}")
+            st.write(f"**Good Feedback:** {stats['good_feedback']}")
+            st.write(f"**Learning Patterns:** {stats['learning_patterns']}")
+            
+            if stats['recent_improvements']:
+                st.write("**Recent Improvements:**")
+                for improvement in stats['recent_improvements']:
+                    st.write(f"• {improvement}")
+            
+            if st.button("🔄 Reset Learning Data", help="Clear all learning data (use with caution)"):
+                rl_agent.reset_learning()
+                st.success("🔄 Learning data reset!")
+                st.rerun()
+    else:
+        st.error("❌ RL Learning system error")
+    
+    st.subheader("🔍 Semantic Search")
     chromadb_toggle = st.checkbox(
         "Enable ChromaDB",
         value=st.session_state.chromadb_enabled,
-        help="Enable ChromaDB for searching and storing processed chapters",
-        # disabled=os.environ.get("STREAMLIT_ENV") == "cloud"
+        help="Enable ChromaDB for searching and storing processed chapters"
     )
     
-    # Handle Chroma initialization
     if chromadb_toggle != st.session_state.chromadb_enabled:
         st.session_state.chromadb_enabled = chromadb_toggle
         if chromadb_toggle:
@@ -117,7 +160,6 @@ with st.sidebar:
                 if vector_store.initialize():
                     st.session_state.chromadb_initialized = True
                     st.success("✅ ChromaDB Initialized Successfully")
-                    # Show collection stats
                     stats = vector_store.get_collection_stats()
                     if stats["status"] == "enabled":
                         st.info(f"📊 Stored chapters: {stats['total_chapters']}")
@@ -128,7 +170,6 @@ with st.sidebar:
         else:
             st.session_state.chromadb_initialized = False
     
-    # ChromaDB Search Interface
     if st.session_state.chromadb_enabled and st.session_state.chromadb_initialized:
         st.markdown("**Search Saved Chapters:**")
         
@@ -158,7 +199,6 @@ with st.sidebar:
                 st.session_state.selected_result = None
                 st.rerun()
         
-        # Display search results
         if st.session_state.search_results:
             st.markdown(f"**Found {len(st.session_state.search_results)} results:**")
             
@@ -166,17 +206,14 @@ with st.sidebar:
                 with st.expander(f"📖 Result {i+1} (Score: {result['similarity_score']:.2f})"):
                     metadata = result['metadata']
                     
-                    # Display metadata
                     st.write(f"**Source:** {metadata.get('source_url', 'Unknown')[:50]}...")
                     st.write(f"**Date:** {metadata.get('timestamp', 'N/A')}")
                     st.write(f"**Style:** {metadata.get('processing_style', 'N/A')}")
                     st.write(f"**Words:** {metadata.get('word_count', 'N/A')}")
                     
-                    # Display preview
                     st.write("**Preview:**")
                     st.text_area("", result['content'], height=100, disabled=True, key=f"preview_{i}")
                     
-                    # Load button
                     if st.button(f"📥 Load This Chapter", key=f"load_{i}"):
                         st.session_state.original_text = result['full_content']
                         st.session_state.writer_output = result['full_content']
@@ -186,7 +223,6 @@ with st.sidebar:
                         st.success("✅ Chapter loaded from search results!")
                         st.rerun()
         
-        # Collection management
         with st.expander("📊 Collection Management"):
             stats = vector_store.get_collection_stats()
             if stats["status"] == "enabled":
@@ -197,7 +233,7 @@ with st.sidebar:
                     all_chapters = vector_store.get_all_chapters()
                     if all_chapters:
                         st.write("**All Stored Chapters:**")
-                        for chapter in all_chapters[:10]:  # Show first 10
+                        for chapter in all_chapters[:10]:
                             metadata = chapter['metadata']
                             st.write(f"• {metadata.get('timestamp', 'Unknown')} - {metadata.get('source_url', 'Unknown')[:40]}...")
                     else:
@@ -254,7 +290,6 @@ with st.sidebar:
                     st.session_state.url_processed = chapter_url
                     st.session_state.scraping_status = "scraped"
                     
-                    # AI Processing
                     results = batch_process(
                         scraped_data["content"], 
                         style_preference, 
@@ -343,7 +378,6 @@ if st.session_state.scraping_status in ["completed", "loaded_from_search"] and s
             reading_time = st.session_state.content_analysis.get("estimated_reading_time", "N/A")
             st.info(f"⏱️ **Reading Time:** {reading_time} min")
         else:
-            # Calculate basic reading time if no analysis
             word_count = len(st.session_state.original_text.split())
             reading_time = max(1, word_count // 200)  
             st.info(f"⏱️ **Reading Time:** ~{reading_time} min")
@@ -354,7 +388,6 @@ if st.session_state.scraping_status in ["completed", "loaded_from_search"] and s
     
     st.markdown("---")
     
-    # Three-column layout for content
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -394,6 +427,78 @@ if st.session_state.scraping_status in ["completed", "loaded_from_search"] and s
             height=450,
             key="reviewer_edit"
         )
+    
+    st.markdown("---")
+    col_voice1, col_voice2, col_status = st.columns([1,1,2])
+    
+    with col_voice1:
+        if st.button("🔊 Listen to Final Output", disabled=get_speaking_status()):
+            if st.session_state.reviewer_output.strip():
+                speak_text(st.session_state.reviewer_output)
+                time.sleep(0.1)
+                st.rerun() 
+            else:
+                st.warning("No content to read!")
+    
+    with col_voice2:
+        if st.button("⏹️ Stop Voice", disabled=not get_speaking_status()):
+            stop_speaking()
+            time.sleep(0.1)
+            st.rerun()
+    
+    with col_status:
+        if get_speaking_status():
+            st.info("🔊 Currently speaking...")
+        else:
+            st.info("🔇 Ready to speak")
+    
+    st.markdown("### 🧠 Rate AI Output")
+    col_rate, col_submit = st.columns([1,2])
+    with col_rate:
+        rating = st.radio("How do you rate the final output?",["Good","Bad"], key="ai_rating")
+    with col_submit:
+        if st.button("✅ Submit Feedback"):
+            metadata = {
+                "source_url": st.session_state.url_processed,
+                "processing_time": time.time(),
+                "word_count": len(st.session_state.reviewer_output.split()),
+                "character_count": len(st.session_state.reviewer_output)
+            }
+            
+            rl_agent.update(
+                rating=rating,
+                output=st.session_state.reviewer_output,
+                style_preference=style_preference,
+                focus_areas=focus_areas,
+                metadata=metadata
+            )
+            
+            st.success("✅ Feedback recorded. Thanks for helping us improve!")
+            
+            new_suggestions = get_rl_learning_insights()
+            if new_suggestions["status"] == "enabled":
+                new_stats = new_suggestions["stats"]
+                st.info(f"📈 Updated: {new_stats['success_rate']:.1f}% success rate ({new_stats['total_feedback']} total feedback)")
+
+if st.session_state.scraping_status == "completed":
+    st.markdown("### 🧠 AI Learning Insights")
+    
+    col_rl1, col_rl2 = st.columns(2)
+    
+    with col_rl1:
+        rl_insights = get_rl_learning_insights()
+        if rl_insights["status"] == "enabled" and rl_insights["learning_active"]:
+            st.info(f"🎯 AI used learned preferences (Success rate: {rl_insights['stats']['success_rate']:.1f}%)")
+        else:
+            st.info("🌱 AI learning will activate after 3+ feedback entries")
+    
+    with col_rl2:
+        if rl_insights["status"] == "enabled":
+            suggestions = rl_insights["suggestions"]
+            if suggestions["learning_insights"]:
+                st.info(f"💡 Latest insight: {suggestions['learning_insights'][0]}")
+            else:
+                st.info("💡 Building learning insights...")
     
     st.markdown("---")
     st.subheader("💬 Final Review & Save")
@@ -494,7 +599,6 @@ elif st.session_state.scraping_status == "error":
     st.error("❌ There was an error processing the URL. Please check the URL and try again.")
 
 else:
-
     st.markdown("""
     ## 🚀 How to Use
     
@@ -523,7 +627,6 @@ else:
     - **Content management** and reuse capabilities
     """)
     
-
     if os.path.exists("final_versions") and os.listdir("final_versions"):
         st.markdown("### 📁 Recent Saved Versions")
         files = sorted(os.listdir("final_versions"), reverse=True)[:5]
@@ -533,7 +636,6 @@ else:
                 mod_time = datetime.fromtimestamp(os.path.getmtime(file_path))
                 st.write(f"📄 `{file}` - {mod_time.strftime('%Y-%m-%d %H:%M')}")
 
-# Footer
 st.markdown("---")
 st.markdown("""
 <div class="footer">
