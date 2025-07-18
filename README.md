@@ -16,6 +16,12 @@ A comprehensive Human-in-the-Loop system that scrapes web content, enhances it w
 - **🔄 Real-time Editing**: Edit AI outputs before final approval
 - **📈 Learning Insights**: Track AI performance and adaptation over time
 
+## 🎥 Demo Video
+
+**Watch the complete workflow demonstration:**
+[📹 View Demo Video](https://drive.google.com/file/d/1t404sVz1x8Rn5mdypO-el_a7VcT__g2S/view?usp=sharing)
+
+
 ## 🚀 Quick Start
 
 ### Prerequisites
