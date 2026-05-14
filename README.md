@@ -45,7 +45,7 @@ A comprehensive Human-in-the-Loop system that scrapes web content, enhances it w
 3. **Set up environment variables**
    ```bash
    # Create .env file
-   GEMINI_API_KEY="your_gemini_api_key_here" > .env
+   GEMINI_API_KEY="your_gemini_api_key_here" 
    ```
 
 4. **Run the application**
